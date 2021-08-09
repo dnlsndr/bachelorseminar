@@ -95,7 +95,18 @@ Typescript: Gradually typing JavaScript
 \end_layout
 
 \begin_layout Author
-Daniel Schneider
+Daniel
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+~
+\end_layout
+
+\end_inset
+
+Schneider
 \end_layout
 
 \begin_layout Author Running
@@ -105,7 +116,20 @@ D.
 
 \begin_layout Institute
 Ludwig-Maximilians-University, Geschwister-Scholl-Platz 1, 80539 Munich,
- Germany
+ Germany, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+email{poststelle@verwaltung.uni-muenchen.de}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Abstract
@@ -227,23 +251,29 @@ literal "false"
 \end_inset
 
 .
- The general goal of programing languages is to make it easier for a human
- to interact with, or specify instructions to follow, for a computer.
+ The general goal of programing languages is to make it easier for humans
+ to interact with computers in a comprehensible way.
  This results in programing languages that increasinly abstract away complex
  mechanics to speed up or simplyfy program development.
  A relatively recent phenomena is the complete removal of type annotations
  within programs, whereby the compiler completely infers variable types.
- This gives the developer a simpler workflow by completely leaving out the
- mental step of thinking about typings.
+ This gives the developer a simpler workflow by leaving out the mental step
+ of thinking about typings.
  Although this may first seem to be a good thing, it has become increasingly
  apparent, that bigger systems degrade in software quality if software quality
  is not a priority.
- This can be mitigated by using type annotated languages with static type
- checking, but would require a complete rewrite in a type annotated language.
+ This can be mitigated by using typing system with static type checking,
+ but would require a complete rewrite in a type annotated and type checked
+ language.
  One of the most popular scripting languages out there – JavaScript – does
  away with type annotations, which to the demise of big software projects
- results in degrading software quality quite quickliy.
+ results in degrading software quality quite quickliy, if not taken care
+ of.
  To remedy this fundamental issue of JavaScript, TypeScript was born.
+ It allows for code type annotations and static type checking of the program
+ at compile time, while still being able to infer untyped code areas, with
+ this approach being called gradual typing.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -699,7 +729,7 @@ This is a sample theorem.
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -714,7 +744,7 @@ status collapsed
 
 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
