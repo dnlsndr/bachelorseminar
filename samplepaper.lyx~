@@ -1,0 +1,1064 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass llncs
+\begin_preamble
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+% \renewcommand\UrlFont{\color{blue}\rmfamily}
+\end_preamble
+\options runningheads
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 0
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Typescript: Gradually typing JavaScript
+\end_layout
+
+\begin_layout Author
+Daniel Schneider
+\end_layout
+
+\begin_layout Author Running
+D.
+ Schneider
+\end_layout
+
+\begin_layout Institute
+Ludwig-Maximilians-University, Geschwister-Scholl-Platz 1, 80539 Munich,
+ Germany
+\end_layout
+
+\begin_layout Abstract
+\begin_inset Quotes eld
+\end_inset
+
+TypeScript is an open-source language which builds on JavaScript, one of
+ the world’s most used tools, by adding static type definitions.
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_ts_homepage"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+This paper will discuss the benefits TypeScript can give developers in terms
+ of software quality and security.
+ It will highlight examples of the main features that are part of the TypeScript
+ standard and how those can be leveraged to convert a previous JavaScript
+ program into a safer TypeScript program.
+\end_layout
+
+\begin_layout Abstract
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+keywords
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+TypeScript 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ JavaScript 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ TypeSafety 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ Gradual tying
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Programing is the act or process of planning or writing a program
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_programing_def"
+literal "false"
+
+\end_inset
+
+.
+ The general goal of programing languages is to make it easier for a human
+ to interact with, or specify instructions to follow, for a computer.
+ This results in programing languages that increasinly abstract away complex
+ mechanics to speed up or simplyfy program development.
+ A relatively recent phenomena is the complete removal of type annotations
+ within programs, whereby the compiler completely infers variable types.
+ This gives the developer a simpler workflow by completely leaving out the
+ mental step of thinking about typings.
+ Although this may first seem to be a good thing, it has become increasingly
+ apparent, that bigger systems degrade in software quality if software quality
+ is not a priority.
+ This can be mitigated by using type annotated languages with static type
+ checking, but would require a complete rewrite in a type annotated language.
+ One of the most popular scripting languages out there – JavaScript – does
+ away with type annotations, which to the demise of big software projects
+ results in degrading software quality quite quickliy.
+ To remedy this fundamental issue of JavaScript, TypeScript was born.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+clearpage
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+History
+\end_layout
+
+\begin_layout Standard
+Initially created by Microsoft in 2014
+\end_layout
+
+\begin_layout Subsection
+Example
+\end_layout
+
+\begin_layout Standard
+In the following we will have a look at a problematic JavaScript snippet,
+ that could have been prevented by TypeScript
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}  
+\end_layout
+
+\begin_layout Plain Layout
+
+let anotherNumber = 
+\begin_inset Quotes eld
+\end_inset
+
+13
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+let numberList = [1,2,3,5,8]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+function insertNumberAndReduce(list, number){
+\end_layout
+
+\begin_layout Plain Layout
+
+  list.push(number)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return list.reduce((acc, val) => acc + val)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+let result = insertNumberAndReduce(numberList, anotherNumber)
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Only two levels of headings should be numbered.
+ Lower level headings remain unnumbered; they are formatted as run-in headings.
+\end_layout
+
+\begin_layout Paragraph
+Sample Heading (Fourth Level)
+\end_layout
+
+\begin_layout Standard
+The contribution should contain no more than four levels of headings.
+ Table
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ gives a summary of all heading levels.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Table captions should be placed above the tables.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab1"
+
+\end_inset
+
+ 
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Heading level 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Example 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Font size and style
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Title (centered) 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size larger
+Lecture Notes
+\size default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14 point, bold
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1st-level heading 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size large
+1 Introduction
+\size default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12 point, bold
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2nd-level heading 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+2.1 Printing Area
+\series default
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10 point, bold
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3rd-level heading 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Run-in Heading in Bold.
+
+\series default
+ Text follows 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10 point, bold
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4th-level heading 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+Lowest Level Heading.
+
+\shape default
+ Text follows 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10 point, italic
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Displayed equations are centered and set on a separate line.
+ 
+\begin_inset Formula 
+\begin{equation}
+x+y=z
+\end{equation}
+
+\end_inset
+
+Please try to avoid rasterized images for line-art diagrams and schemas.
+ Whenever possible, use vector graphics instead (see Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename fig1.eps
+	width 100text%
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A figure caption is always placed below the illustration.
+ Please note that short captions are centered, while long ones are justified
+ by the macro package automatically.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig1"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+This is a sample theorem.
+ The run-in heading is set in bold, while the following text appears in
+ italics.
+ Definitions, lemmas, propositions, and corollaries are styled the same
+ way.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% the environments 'definition', 'lemma', 'proposition', 'corollary',
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% 'remark', and 'example' are defined in the LLNCS documentclass as well.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Proofs, examples, and remarks have the initial word in italics, while the
+ following text appears in normal font.
+ 
+\end_layout
+
+\begin_layout Standard
+For citations of references, we prefer the use of square brackets and consecutiv
+e numbers.
+ Citations using labels or the author/year convention are also acceptable.
+ The following bibliography provides a sample reference list with entries
+ for journal articles
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_article1"
+literal "false"
+
+\end_inset
+
+, an LNCS chapter
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_lncs1"
+literal "false"
+
+\end_inset
+
+, a book
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_book1"
+literal "false"
+
+\end_inset
+
+, proceedings without editors
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_proc1"
+literal "false"
+
+\end_inset
+
+, and a homepage
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_url1"
+literal "false"
+
+\end_inset
+
+.
+ Multiple citations are grouped 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_article1,ref_lncs1,ref_book1"
+literal "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ref_article1,ref_book1,ref_proc1,ref_url1"
+literal "false"
+
+\end_inset
+
+.
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% ---- Bibliography ----
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% BibTeX users should specify bibliography style 'splncs04'.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% References will then be sorted and formatted in the correct style.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% 
+\backslash
+bibliographystyle{splncs04}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+% 
+\backslash
+bibliography{mybibliography}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_article1"
+literal "false"
+
+\end_inset
+
+ Author, F.: Article title.
+ Journal 
+\series bold
+2
+\series default
+(5), 99–110 (2016)
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_ts_homepage"
+literal "false"
+
+\end_inset
+
+ Typescript Homepage, 
+\begin_inset CommandInset href
+LatexCommand href
+name "Typescript Homepage"
+target "https://www.typescriptlang.org/"
+literal "false"
+
+\end_inset
+
+.
+ Last accessed August 8, 2021.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_programing_def"
+literal "false"
+
+\end_inset
+
+Thesaurus programing definition, 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://www.dictionary.com/browse/programing"
+literal "false"
+
+\end_inset
+
+.
+ Last accessed August 9, 2021.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_lncs1"
+literal "false"
+
+\end_inset
+
+ Author, F., Author, S.: Title of a proceedings paper.
+ In: Editor, F., Editor, S.
+ (eds.) CONFERENCE 2016, LNCS, vol.
+ 9999, pp.
+ 1–13.
+ Springer, Heidelberg (2016).
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+doi
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+10.10007/1234567890
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_book1"
+literal "false"
+
+\end_inset
+
+ Author, F., Author, S., Author, T.: Book title.
+ 2nd edn.
+ Publisher, Location (1999)
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_proc1"
+literal "false"
+
+\end_inset
+
+ Author, A.-B.: Contribution title.
+ In: 9th International Proceedings on Proceedings, pp.
+ 1–2.
+ Publisher, Location (2010)
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "ref_url1"
+literal "false"
+
+\end_inset
+
+ LNCS Homepage, 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.springer.com/lncs
+\end_layout
+
+\end_inset
+
+.
+ Last accessed 4 Oct 2017 
+\end_layout
+
+\end_body
+\end_document
