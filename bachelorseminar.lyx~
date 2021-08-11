@@ -1,6 +1,7 @@
 #LyX 2.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 544
 \begin_document
+\counterwithin{lstlisting}{section}
 \begin_header
 \save_transient_properties true
 \origin unavailable
@@ -42,7 +43,7 @@
 %
 
 \lstdefinelanguage{JavaScript}{
-  morekeywords=[1]{break, continue, delete, else, for, function, interface, type, if, in,
+  morekeywords=[1]{break, continue, delete, else, for, function, interface, export, namespace, type, if, in,
     new, return, this, typeof, var, let, const, void, while, with},
   % Literals, primitive types, and reference types.
   morekeywords=[2]{false, null, true, boolean, number, string, undefined,
@@ -1168,7 +1169,7 @@ Tuple usage
 
 \begin_layout Plain Layout
 
-// Detail data: order, key, value
+// Type structure: <order>, <key>, <value>
 \end_layout
 
 \begin_layout Plain Layout
@@ -1284,14 +1285,17 @@ end{lstlisting}
 
 \begin_layout Problem
 TypeScript will throw an error upon compilation, since the Arrays within
- the userDetails Array do not correspond to the Detail type
+ the 'userDetails' Array do not correspond to the 'Detail' type
 \end_layout
 
 \begin_layout Standard
-Finally we also have the ability to type a infinitely size array.
- This is handy if one knows the first elements of an array but does not
- know the types of all of the following elements.
- These possibly infinitely sized tuples are also called Variadic Tuples:
+Finally we also have the ability to create Tuples out of other Tuples.
+ This is handy if one e.g.
+ knows the first elements of an array but wants to dynamically define all
+ following element types of that Array.
+ These Variadic Tuples can reduce code complexity.
+ Rewriting our previous working example into Variadic Tuples results in
+ the following code:
 \end_layout
 
 \begin_layout Standard
@@ -1315,22 +1319,36 @@ Variadic Tuples
 
 \begin_layout Plain Layout
 
-let userDetails: Detail[] = [
+// Type structure: <order>, <key>, <custom element types>
 \end_layout
 
 \begin_layout Plain Layout
 
-	[1, 'age', 22, 'a fourth element'],
+type Detail<T extends unknown[]> = [number, string, ...T]
 \end_layout
 
 \begin_layout Plain Layout
 
-	[2, 5, 6],
 \end_layout
 
 \begin_layout Plain Layout
 
-	['some order', 'name', 'John Doe']
+let userDetails: Detail<[number | string]>[] = [
+\end_layout
+
+\begin_layout Plain Layout
+
+	[1, 'age', 22],
+\end_layout
+
+\begin_layout Plain Layout
+
+	[2, 'semester', 6],
+\end_layout
+
+\begin_layout Plain Layout
+
+	[10, 'name', 'John Doe']
 \end_layout
 
 \begin_layout Plain Layout
@@ -1350,12 +1368,261 @@ end{lstlisting}
 
 \end_layout
 
+\begin_layout Remark
+This Variadic Tuple system now lets us define the <custom element types>
+ at a variable basis, giving us more freedom in reusing Types, while still
+ forcing us to abide to general typing structures like the 'Detail' type.
+\end_layout
+
 \begin_layout Subsection
 Namespaces
 \end_layout
 
+\begin_layout Standard
+Namespaces allow us to split Types into separate logical units.
+ This also allows for equally named types without them interfering with
+ each other.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[style=ES6, language=JavaScript, caption=
+\begin_inset Quotes erd
+\end_inset
+
+Variadic Tuples
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+namespace User {
+\end_layout
+
+\begin_layout Plain Layout
+
+	export interface Profile {
+\end_layout
+
+\begin_layout Plain Layout
+
+		email: string
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+namespace Admin {
+\end_layout
+
+\begin_layout Plain Layout
+
+	export interface Profile {
+\end_layout
+
+\begin_layout Plain Layout
+
+		email: string
+\end_layout
+
+\begin_layout Plain Layout
+
+		roles: Role[]
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	interface Role {
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: string
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Note
+The User and Admin namespace both have a Profile type.
+ Although there are now two interfaces with the same name, they do not collide
+ with each other since they exist in a different scope.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Note
+Namespaces allow for private types that are only accessible within the namespace
+ itself.
+ Here, the Role type within the Admin namespaces is not exported, thus only
+ types within the Admin namespace can reference it.
+ This allows for better control over the typing API of your program by only
+ making types visible that are intended to be used
+\end_layout
+
+\begin_layout Standard
+To use a type within a namespace we access it through dot notation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[style=ES6, language=JavaScript, caption=
+\begin_inset Quotes erd
+\end_inset
+
+Variadic Tuples
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+const userProfile: User.Profile = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	name: 
+\begin_inset Quotes eld
+\end_inset
+
+John Doe
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Generics
+\end_layout
+
+\begin_layout Standard
+Generics introduce an abstration layer to your typings.
+ It allows for dynamic types depending on the use case.
+ Let's have a look at how Generics are used:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[style=ES6, language=JavaScript, caption=
+\begin_inset Quotes erd
+\end_inset
+
+Variadic Tuples
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+function listify<T>(x: T): T[] {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return [x]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section

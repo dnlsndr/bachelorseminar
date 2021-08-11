@@ -42,7 +42,7 @@
 %
 
 \lstdefinelanguage{JavaScript}{
-  morekeywords=[1]{break, continue, delete, else, for, function, interface, type, if, in,
+  morekeywords=[1]{break, continue, delete, else, for, function, interface, export, namespace, type, if, in,
     new, return, this, typeof, var, let, const, void, while, with},
   % Literals, primitive types, and reference types.
   morekeywords=[2]{false, null, true, boolean, number, string, undefined,
@@ -1377,8 +1377,251 @@ This Variadic Tuple system now lets us define the <custom element types>
 Namespaces
 \end_layout
 
+\begin_layout Standard
+Namespaces allow us to split Types into separate logical units.
+ This also allows for equally named types without them interfering with
+ each other.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[style=ES6, language=JavaScript, caption=
+\begin_inset Quotes erd
+\end_inset
+
+Variadic Tuples
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+namespace User {
+\end_layout
+
+\begin_layout Plain Layout
+
+	export interface Profile {
+\end_layout
+
+\begin_layout Plain Layout
+
+		email: string
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+namespace Admin {
+\end_layout
+
+\begin_layout Plain Layout
+
+	export interface Profile {
+\end_layout
+
+\begin_layout Plain Layout
+
+		email: string
+\end_layout
+
+\begin_layout Plain Layout
+
+		roles: Role[]
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	interface Role {
+\end_layout
+
+\begin_layout Plain Layout
+
+		name: string
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Note
+The User and Admin namespace both have a Profile type.
+ Although there are now two interfaces with the same name, they do not collide
+ with each other since they exist in a different scope.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Note
+Namespaces allow for private types that are only accessible within the namespace
+ itself.
+ Here, the Role type within the Admin namespaces is not exported, thus only
+ types within the Admin namespace can reference it.
+ This allows for better control over the typing API of your program by only
+ making types visible that are intended to be used
+\end_layout
+
+\begin_layout Standard
+To use a type within a namespace we access it through dot notation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[style=ES6, language=JavaScript, caption=
+\begin_inset Quotes erd
+\end_inset
+
+Variadic Tuples
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+const userProfile: User.Profile = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	name: 
+\begin_inset Quotes eld
+\end_inset
+
+John Doe
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Generics
+\end_layout
+
+\begin_layout Standard
+Generics introduce an abstration layer to your typings.
+ It allows for dynamic types depending on the use case.
+ Let's have a look at how Generics are used:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{lstlisting}[style=ES6, language=JavaScript, caption=
+\begin_inset Quotes erd
+\end_inset
+
+Variadic Tuples
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout Plain Layout
+
+function listify<T>(x: T): T[] {
+\end_layout
+
+\begin_layout Plain Layout
+
+	return [x]
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{lstlisting}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section

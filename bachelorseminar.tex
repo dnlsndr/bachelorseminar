@@ -1,0 +1,480 @@
+\documentclass[letterpaper,runningheads]{llncs}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmonofont[Scale=0.8]{Dank Mono}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage[unicode=true]
+ {hyperref}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{textcomp}
+\makeatletter
+
+\lstdefinelanguage[ECMAScript2015]{JavaScript}[]{JavaScript}{
+  morekeywords=[1]{await, async, case, catch, class, const, default, do,
+    enum, export, extends, finally, from, implements, import, instanceof,
+    let, static, super, switch, throw, try},
+  morestring=[b]` % Interpolation strings.
+}
+
+\lstdefinelanguage{JavaScript}{
+  morekeywords=[1]{break, continue, delete, else, for, function, interface, export, namespace, type, if, in,
+    new, return, this, typeof, var, let, const, void, while, with},
+  % Literals, primitive types, and reference types.
+  morekeywords=[2]{false, null, true, boolean, number, string, undefined,
+    Array, Boolean, Date, Math, Number, String, Object},
+  % Built-ins.
+  morekeywords=[3]{eval, parseInt, parseFloat, escape, unescape},
+  sensitive,
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morecomment=[s]{/**}{*/}, % JavaDoc style comments
+  morestring=[b]',
+  morestring=[b]"
+}[keywords, comments, strings]
+
+
+\lstalias[]{ES6}[ECMAScript2015]{JavaScript}
+
+% Requires package: color.
+\definecolor{mediumgray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{mediumblue}{rgb}{0.0, 0.0, 0.8}
+\definecolor{forestgreen}{rgb}{0.13, 0.55, 0.13}
+\definecolor{darkviolet}{rgb}{0.58, 0.0, 0.83}
+\definecolor{royalblue}{rgb}{0.25, 0.41, 0.88}
+\definecolor{crimson}{rgb}{0.86, 0.8, 0.24}
+
+\lstdefinestyle{JSES6Base}{
+  backgroundcolor=\color{white},
+  basicstyle=\ttfamily,
+  breakatwhitespace=true,
+  breaklines=true,
+  captionpos=b,
+  columns=fullflexible,
+  commentstyle=\color{mediumgray}\upshape,
+  emph={},
+  emphstyle=\color{crimson},
+  extendedchars=true,  % requires inputenc
+  fontadjust=true,
+  frame=single,
+  framesep=6pt, 
+  identifierstyle=\color{black},
+  keepspaces=true,
+  keywordstyle=\color{mediumblue},
+  keywordstyle={[2]\color{darkviolet}},
+  keywordstyle={[3]\color{royalblue}},
+  numbers=left,
+  numbersep=10pt,
+  numberstyle=\tiny\color{mediumgray},
+  rulecolor=\color{mediumgray},
+  showlines=true,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stringstyle=\color{forestgreen},
+  tabsize=2,
+  title=\lstname,
+  upquote=true  % requires textcomp
+}
+
+\lstdefinestyle{JavaScript}{
+  language=JavaScript,
+  style=JSES6Base
+}
+\lstdefinestyle{ES6}{
+  language=ES6,
+  style=JSES6Base
+}
+
+
+\begin{document}
+
+\counterwithin{lstlisting}{subsection}
+
+
+\title{Typescript: Gradually typing JavaScript}
+\author{Daniel~Schneider}
+\authorrunning{D. Schneider}
+\institute{Ludwig-Maximilians-University, Geschwister-Scholl-Platz 1, 80539 Munich, Germany \email{poststelle@verwaltung.uni-muenchen.de}}
+\maketitle
+\begin{abstract}
+``TypeScript is an open-source language which builds on JavaScript, one of the world’s most used tools, by adding static type definitions.''\cite{ref_ts_homepage}
+
+This paper will discuss the benefits TypeScript can give developers
+in terms of software quality and security. It will highlight examples
+of the main features that are part of the TypeScript standard and
+how those can be leveraged to convert a previous JavaScript program
+into a safer TypeScript program.
+
+\keywords{TypeScript \and JavaScript \and Type safety \and Gradual typing} 
+\end{abstract}
+
+\section{Introduction}
+
+Programing is the act or process of planning or writing a program\cite{ref_programing_def}.
+The general goal of programing languages is to make it easier for
+humans to interact with computers in a comprehensible way. This results
+in programing languages that increasinly abstract away complex mechanisms
+to speed up or simplify program development. A relatively recent phenomena
+is the complete removal of type annotations within programing languages,
+whereby the compiler completely infers variable types. This gives
+the developer a simpler workflow by leaving out the mental step of
+thinking about typings. Although this may first seem to be a good
+thing, it has become increasingly apparent, that bigger programs degrade
+in software quality if software quality is not a priority. This can
+be mitigated by using typing systems with static type checking, but
+would require a complete rewrite in a type annotated and type checked
+language. One of the most popular scripting languages out there --
+JavaScript -- does away with type annotations, which to the demise
+of big software projects, written in JavaScript, results in degrading
+software quality quite quickliy if not taken care of. \\
+To remedy this fundamental issue of JavaScript, TypeScript was born.
+It allows for code type annotations and static type checking of the
+program at compile time, while still being able to infer untyped code
+areas to the point of compiling plain JavaScript code without any
+type annotations. 
+
+\clearpage
+
+To get a better feeling for what benefits TypeScript can give us,
+we will have a look at a possibly problematic JavaScript snippet:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Problematic JavaScript code snippet"]
+let anotherNumber = "13"
+let numberList = [1,2,3,5,8]
+
+function insertNumberAndReduce(list, newNumber){
+  list.push(newNumber)
+  return list.reduce((acc, val) => acc + val)
+}
+
+let result = insertNumberAndReduce(numberList, anotherNumber)
+\end{lstlisting}
+
+When executing this code snippet, we get the result of ``1913''
+which obiously is false. To better understand what is happening here,
+we will follow this code in a more abstract manner:
+
+\begin{enumerate}
+\item String ``13'' gets inserted into the number list, consisting of
+integers
+\item ``insertNumberAndReduce'' reduces all numbers by adding them
+\item ``13'' is added on to the sum of all preceeding numbers in the numberList
+\item Adding strings and numbers is not possible, therefore the sum of the
+numbers is cast into a string and both strings are concatenated
+\item We recieve the result ``1913''
+\end{enumerate}
+
+Since there is no system that can check at compile time if what we are doing may not
+be intended, JavaScript tries its best to compute our code. Of course we could manually check if the parameters given to the function correspond to native JavaScript datatypes by using conditionals, but this would  degrade code legibility, may impact runtime performance negatively and might be omitted by developers therefore also requiring thorough testing.
+
+\begin{claim}
+This issue could be easily prevented by keeping the developer from inserting
+a string into a list of numbers, that is otherwise only made up of
+integers
+\end{claim}
+
+Let us now rewrite the example into TypeScript with the corresponding
+type annotations and see if we are able to compile this snippet successfully:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Fixed TypeScript code snippet"]
+let anotherNumber = "13"
+let numberList = [1,2,3,5,8]
+
+function insertNumberAndReduce
+(list: number[], newNumber: number): number {
+  list.push(newNumber)
+  return list.reduce((acc, val) => acc + val)
+}
+
+let result = insertNumberAndReduce(numberList, anotherNumber)
+\end{lstlisting}
+
+\begin{note}
+We have added type annotations to the function definition such that
+the function will only accept a list of numbers, a additional number
+and will only return a value of type number
+\end{note}
+
+\begin{problem}
+TypeScript will throw an error upon compilation, since the function
+call does not comply with the function definition and its
+type annotations. 
+\end{problem}
+
+
+\section{Typescript in a nutshell}
+
+In this section we will have a look at the core principles of TypeScript.
+
+\subsection{Architecture}
+
+TypeScript itself is primarily a compiler that runs on preexisting TypeScript code. This compiler takes in TypeScript files and emits valid JavaScript which can then be executed by JavaScript runtimes such as Node.js or Deno.
+
+
+\begin{list}{•}{The four building blocks of the TypeScript compiler:}
+
+\item \textbf{Parser:} The parser parses the TypeScript code syntax into a Abstract Syntax Tree short AST.
+\item \textbf{Binder}: The binder links code modules to each other. It resolves dependencies and enables the additional importing of type definitions from other files. 
+\item \textbf{Type Resolver}: The type resolver checks the code for type soundness and throws an exception for any type collisions, resulting in a failed compilation. This is the central part of the typescript compiler enabling static type checking.
+\item \textbf{Emitter}: The emitter then generates native JavaScript code from the previously generated AST, which can be executed by any capable JavaScript runtime.
+\end{list}
+
+\subsection{History}
+
+\begin{multicols}{2}
+[
+To get to know TypeScript a bit better, we will have a quick look at the history
+]
+\noindent
+Typescript v0.8 was initially created by Microsoft in 2012 an published to the public. 
+
+\medskip
+\noindent
+In the following year they released v0.9 which brought with it a generics system for type annotations. 
+
+\medskip
+\noindent
+In 2014 Microsoft then released the first production-ready version v1.0 integrating the TypeScript compiler into their already existing Visual Sudio IDE platform, bringing TypeScript to a broader audience of developers that might want to try TypeScript. 
+
+\medskip
+\noindent
+Later that year, in July, a new compiler version was released with five times the performance of the old compiler, improving production implementaion. 
+
+\medskip
+\noindent
+In 2016 v2.0 was released, that tried to remedy a general programing language issue commonly called the "Billion-Dollar mistake"\footnote{The term "Billion-Dollar mistake" was first coined by Tony Hoare, who also created the ALGOL W language. Having implemented null referencing in that language he may have caused around a billion dollars of damage since 1965, due to errors, vulnerabilities and system crashes. In the JavaScript world the implementation of the primitive "null" datatype may have also caused high sums of damages due to a 25 year old JavaScript bug that causes the primitive "null" datatype to resolve to the type of "object"\cite{ref_billion_dollar_mistake}}. 
+
+\medskip
+\noindent
+Later v3.0 was released in 2018 brining with it several smaller features like tuples. 
+
+\medskip
+\noindent
+The most recent version v4.0 was released 2020 and brings improvements to the existing Tuple system by adding Variadic Tuples.
+\end{multicols}
+
+\subsection{Static type checking}
+
+Typescript if of it self is a compiler. It takes in TypeScript code
+and compiles it down to JavaScript while also doing static type checkint.
+Static type checking is the process of parsing the code into an AST
+(Abstract Syntax Tree) including type annotations. The types in the
+AST are then infered, if not existant, and are checked for soundness
+by the Type Resolver.
+
+\subsection{Gradual typing}
+
+TypeScript leverages gradual typing. Gradual typing is the principle
+of gradually adapting type annotations in your program, with the ability
+to complete leave out type annotations. This enables developers to
+gradually migrate over JavaScript projects to TypeScript without having
+to worry about code compatability. TypeScript will try to infer as
+many types as possible, but cannot guarantee complete type safety
+as long as there are sections in a program that are not type-annotated.
+
+\section{Features}
+
+We will have a look at the four most important features TypeScript
+brings with it. Knowing these features is enough to provide type safety
+to your code.
+
+\subsection{Interfaces and Types}
+
+Interfaces and Types are the most basic building blocks within TypeScript
+and allow us to define custom object and type schemas. First we will
+have a look at how Interfaces and Types are defined and referenced
+in code:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Interface and Type declarations"]
+interface User {
+	name: string
+	email: string
+	age?: number
+}
+// An equivalent to the interface can also be defined as a type
+type User = {
+	name: string
+	email: string
+	age?: number
+}
+\end{lstlisting}
+
+\begin{question}
+What is the difference between an Interface and a Type?
+\end{question}
+
+\begin{solution}
+There are hardly any differences between Interfaces and Types. Types
+have the ability to define primitive types such as numbers and strings,
+while Interfaces can only defined object structures and types within.
+Types can not be merged with each other, while Interfaces have the
+capability to be merged, should the developer define several Interfaces
+with the same name. In general, Interfaces should be preferred to
+Types if they can be used interchangeably.
+\end{solution}
+
+These Interfaces and Types can then be used in the following manner:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Interface and Type usage"]
+const user: User = {
+	name: "John Doe",
+	email: "john@doe.com"
+}
+\end{lstlisting}
+
+\begin{note}
+The ``age'' key can be omitted, since we've made the key optional
+in the type definition by suffixing the key with a question-mark
+\end{note}
+
+
+\subsection{Tuples}
+
+Tules give you the ability to type the structure of an array. This
+means that it is possible to define a specific type for each index
+of that array and enabling us to build tuples out of several other
+tuple building blocks, called variadic tuples. In the following example
+we can see how simple Tuples can be implemented:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Tuple usage"]
+// Type structure: <order>, <key>, <value>
+type Detail = [number, string, number | string]
+
+let userDetails: Detail[] = [
+	[1, 'age', 22],
+	[2, 'semester', 6],
+	[10, 'name', 'John Doe']
+]
+\end{lstlisting}
+
+\begin{note}
+Using a pipe symbol (|) between types resembles an OR operator. Therefore
+the type of that element can be either a number OR a string
+\end{note}
+
+By using Tuples, TypeScript can prevent wrong usage of arrays:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Problematic Tuple usage"]
+let userDetails: Detail[] = [
+	[1, 'age', 22, 'a fourth element'],
+	[2, 5, 6],
+	['some order', 'name', 'John Doe']
+]
+\end{lstlisting}
+
+\begin{problem}
+TypeScript will throw an error upon compilation, since the Arrays
+within the 'userDetails' Array do not correspond to the 'Detail' type
+\end{problem}
+
+Finally we also have the ability to create Tuples out of other Tuples.
+This is handy if one e.g. knows the first elements of an array but
+wants to dynamically define all following element types of that Array.
+These Variadic Tuples can reduce code complexity. Rewriting our previous
+working example into Variadic Tuples results in the following code:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+// Type structure: <order>, <key>, <custom element types>
+type Detail<T extends unknown[]> = [number, string, ...T]
+
+let userDetails: Detail<[number | string]>[] = [
+	[1, 'age', 22],
+	[2, 'semester', 6],
+	[10, 'name', 'John Doe']
+]
+\end{lstlisting}
+
+\begin{remark}
+This Variadic Tuple system now lets us define the <custom element
+types> at a variable basis, giving us more freedom in reusing Types,
+while still forcing us to abide to general typing structures like
+the 'Detail' type.
+\end{remark}
+
+
+\subsection{Namespaces}
+
+Namespaces allow us to split Types into separate logical units. This
+also allows for equally named types without them interfering with
+each other.
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+namespace User {
+	export interface Profile {
+		email: string
+	}
+}
+
+namespace Admin {
+	export interface Profile {
+		email: string
+		roles: Role[]
+	}
+	interface Role {
+		name: string
+	}
+}
+\end{lstlisting}
+
+\begin{note}
+The User and Admin namespace both have a Profile type. Although there
+are now two interfaces with the same name, they do not collide with
+each other since they exist in a different scope.
+\end{note}
+
+\begin{note}
+Namespaces allow for private types that are only accessible within
+the namespace itself. Here, the Role type within the Admin namespaces
+is not exported, thus only types within the Admin namespace can reference
+it. This allows for better control over the typing API of your program
+by only making types visible that are intended to be used
+\end{note}
+
+To use a type within a namespace we access it through dot notation:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+const userProfile: User.Profile = {
+	name: "John Doe"
+}
+\end{lstlisting}
+
+\subsection{Generics}
+
+Generics introduce an abstration layer to your typings. It allows
+for dynamic types depending on the use case. Let's have a look at
+how Generics are used:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+function listify<T>(x: T): T[] {
+	return [x]
+}
+\end{lstlisting}
+
+This listify function can take any type of parameter x and returns a list of the type of parameter x. This allows for fully dynamic typing without having to reimplement the same function for each type of parameter. It is also possible to manually control the type we pass into the function. Let's have a look at the following use-case:
+
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+listify<bool>(true)
+\end{lstlisting}
+
+Here we are telling the listify function, that it should create a list of booleans, passing in one element of value "true"
+
+\section{Integration}
+
+\subsection{Language server}
+
+\section{Conclusion}
+
+Besides some configuration overhead and learning how to use TypeScript effectively, TypeScript can majorly improve software quality if used in the right way. Due to its gradual typing approach, preexisting JavaScript code need not be touched for you to get started with TypeScript. It can find bugs in your code and give you direct feedback while writing it, leveraging the power of the compiler and language-server. These bugs would normally have to be tested against in elaborate testing setups that may even take up more development time than simply implementing TypeScript in error prone program areas. All in all it can be said that TypeScript is a great tool to keep up and prevent degradation of the quality of large software projects.  
+
+\begin{thebibliography}{1}
+\bibitem{ref_billion_dollar_mistake} Medium: Billion-dollar mistake(s)!, \href{https://jagadeeshrampam.medium.com/billion-dollar-mistake-s-37620be56a12}{https://jagadeeshrampam.medium.com/billion-dollar-mistake-s-37620be56a12}. Last accessed August 11, 2021
+
+\bibitem{ref_ts_homepage} Typescript Homepage, \href{https://www.typescriptlang.org/}{https://www.typescriptlang.org/}. Last accessed August 8, 2021
+
+\bibitem{ref_programing_def} Thesaurus programing definition, \href{https://www.dictionary.com/browse/programing}{https://www.dictionary.com/browse/programing}. Last accessed August 9, 2021
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,16 @@
+\contentsline {title}{Typescript: Gradually typing JavaScript}{1}{chapter.1}%
+\authcount {1}
+\contentsline {author}{Daniel\nobreakspace {}Schneider}{1}{chapter.1}%
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1.1}%
+\contentsline {section}{\numberline {2}Typescript in a nutshell}{4}{section.1.2}%
+\contentsline {subsection}{\numberline {2.1}History}{4}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {2.2}Static type checking}{4}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {2.3}Gradual typing}{4}{subsection.1.2.3}%
+\contentsline {section}{\numberline {3}Features}{5}{section.1.3}%
+\contentsline {subsection}{\numberline {3.1}Interfaces and Types}{5}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {3.2}Tuples}{6}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {3.3}Namespaces}{7}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {3.4}Generics}{8}{subsection.1.3.4}%
+\contentsline {section}{\numberline {4}Integration}{8}{section.1.4}%
+\contentsline {subsection}{\numberline {4.1}Language server}{8}{subsection.1.4.1}%
+\contentsline {section}{\numberline {5}Conclusion}{8}{section.1.5}%
