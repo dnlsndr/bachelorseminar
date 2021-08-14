@@ -1,6 +1,6 @@
-\documentclass[letterpaper,runningheads]{llncs}
+\documentclass[english,runningheads, letterpaper]{llncs}[2018/03/10]
+
 \usepackage{fontspec}
-\usepackage{unicode-math}
 \setmonofont[Scale=0.8]{Dank Mono}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -89,10 +89,16 @@
 }
 
 
+\raggedbottom
+
 \begin{document}
 
 \counterwithin{lstlisting}{subsection}
-
+\counterwithin{note}{subsection}
+\counterwithin{question}{subsection}
+\counterwithin{solution}{subsection}
+\counterwithin{problem}{subsection}
+\counterwithin{remark}{subsection}
 
 \title{Typescript: Gradually typing JavaScript}
 \author{Daniel~Schneider}
@@ -113,14 +119,14 @@ into a safer TypeScript program.
 
 \section{Introduction}
 
-Programing is the act or process of planning or writing a program\cite{ref_programing_def}.
-The general goal of programing languages is to make it easier for
-humans to interact with computers in a comprehensible way. This results
-in programing languages that increasinly abstract away complex mechanisms
+Programming is the act or process of planning or writing a program \cite{ref_programing_def}.
+The general goal of programming languages is to make it easier for
+humans to interact with computers in a comprehensible way \cite{ref_def_programing_language}. This results
+in programming languages that increasingly abstract away complex mechanisms
 to speed up or simplify program development. A relatively recent phenomena
-is the complete removal of type annotations within programing languages,
-whereby the compiler completely infers variable types. This gives
-the developer a simpler workflow by leaving out the mental step of
+is the complete removal of type annotations within programming languages,
+whereby the compiler completely infers variable types on a best effort principle. This gives
+the developer a simpler work-flow by leaving out the mental step of
 thinking about typings. Although this may first seem to be a good
 thing, it has become increasingly apparent, that bigger programs degrade
 in software quality if software quality is not a priority. This can
@@ -128,11 +134,11 @@ be mitigated by using typing systems with static type checking, but
 would require a complete rewrite in a type annotated and type checked
 language. One of the most popular scripting languages out there --
 JavaScript -- does away with type annotations, which to the demise
-of big software projects, written in JavaScript, results in degrading
-software quality quite quickliy if not taken care of. \\
-To remedy this fundamental issue of JavaScript, TypeScript was born.
+of big software projects that are written in JavaScript, results in degrading
+software quality quite quickly if it is not taken care of. \\
+TypeScript was introduced to remedy this fundamental issue of JavaScript.
 It allows for code type annotations and static type checking of the
-program at compile time, while still being able to infer untyped code
+program, while still being able to infer untyped code
 areas to the point of compiling plain JavaScript code without any
 type annotations. 
 
@@ -153,28 +159,29 @@ function insertNumberAndReduce(list, newNumber){
 let result = insertNumberAndReduce(numberList, anotherNumber)
 \end{lstlisting}
 
-When executing this code snippet, we get the result of ``1913''
-which obiously is false. To better understand what is happening here,
+When executing this code snippet, we get the result ``1913''
+which obviously is false. To better understand what is happening here,
 we will follow this code in a more abstract manner:
 
 \begin{enumerate}
 \item String ``13'' gets inserted into the number list, consisting of
 integers
 \item ``insertNumberAndReduce'' reduces all numbers by adding them
-\item ``13'' is added on to the sum of all preceeding numbers in the numberList
+\item ``13'' is added on to the sum of all preceding numbers in the numberList
 \item Adding strings and numbers is not possible, therefore the sum of the
 numbers is cast into a string and both strings are concatenated
-\item We recieve the result ``1913''
+\item We receive the result ``1913''
 \end{enumerate}
 
-Since there is no system that can check at compile time if what we are doing may not
-be intended, JavaScript tries its best to compute our code. Of course we could manually check if the parameters given to the function correspond to native JavaScript datatypes by using conditionals, but this would  degrade code legibility, may impact runtime performance negatively and might be omitted by developers therefore also requiring thorough testing.
+Since in JavaScript there is no system that can check at compile time if what we are doing may or may not
+be intended, it tries its best to compute our code, potentially casting variables into different data-types. Of course we could manually check if the parameters given to the function correspond to native JavaScript data-types by using conditionals, but this would  degrade code legibility, may impact run-time performance negatively and might be omitted by developers therefore also requiring thorough testing.
 
 \begin{claim}
-This issue could be easily prevented by keeping the developer from inserting
-a string into a list of numbers, that is otherwise only made up of
-integers
+This issue could easily be prevented by keeping the developer from inserting
+a string into a list of numbers.
 \end{claim}
+
+\pagebreak
 
 Let us now rewrite the example into TypeScript with the corresponding
 type annotations and see if we are able to compile this snippet successfully:
@@ -198,38 +205,26 @@ the function will only accept a list of numbers, a additional number
 and will only return a value of type number
 \end{note}
 
-\begin{problem}
-TypeScript will throw an error upon compilation, since the function
+Executing compilation, TypeScript will throw an error, since the function
 call does not comply with the function definition and its
-type annotations. 
-\end{problem}
+type annotations.
+This example clearly highlights the strengths of TypeScript in an otherwise untyped JavaScript landscape.
 
 
 \section{Typescript in a nutshell}
 
-In this section we will have a look at the core principles of TypeScript.
+Before we have a look at all the features TypeScript provides to us, we should first get to know it better. This will help understanding what TypeScript does in the background and how it should be handled.
 
-\subsection{Architecture}
-
-TypeScript itself is primarily a compiler that runs on preexisting TypeScript code. This compiler takes in TypeScript files and emits valid JavaScript which can then be executed by JavaScript runtimes such as Node.js or Deno.
-
-
-\begin{list}{•}{The four building blocks of the TypeScript compiler:}
-
-\item \textbf{Parser:} The parser parses the TypeScript code syntax into a Abstract Syntax Tree short AST.
-\item \textbf{Binder}: The binder links code modules to each other. It resolves dependencies and enables the additional importing of type definitions from other files. 
-\item \textbf{Type Resolver}: The type resolver checks the code for type soundness and throws an exception for any type collisions, resulting in a failed compilation. This is the central part of the typescript compiler enabling static type checking.
-\item \textbf{Emitter}: The emitter then generates native JavaScript code from the previously generated AST, which can be executed by any capable JavaScript runtime.
-\end{list}
-
-\subsection{History}
+\pagebreak
+\subsection{History \cite{ref_ts_wikipedia}}
 
 \begin{multicols}{2}
 [
-To get to know TypeScript a bit better, we will have a quick look at the history
+\noindent
+To get to know TypeScript a bit better, we will have a quick look at its history.
 ]
 \noindent
-Typescript v0.8 was initially created by Microsoft in 2012 an published to the public. 
+Microsoft initially created Typescript v0.8 in 2012 and published it to the public. 
 
 \medskip
 \noindent
@@ -245,7 +240,7 @@ Later that year, in July, a new compiler version was released with five times th
 
 \medskip
 \noindent
-In 2016 v2.0 was released, that tried to remedy a general programing language issue commonly called the "Billion-Dollar mistake"\footnote{The term "Billion-Dollar mistake" was first coined by Tony Hoare, who also created the ALGOL W language. Having implemented null referencing in that language he may have caused around a billion dollars of damage since 1965, due to errors, vulnerabilities and system crashes. In the JavaScript world the implementation of the primitive "null" datatype may have also caused high sums of damages due to a 25 year old JavaScript bug that causes the primitive "null" datatype to resolve to the type of "object"\cite{ref_billion_dollar_mistake}}. 
+In 2016 v2.0 was released, that tried to remedy a general programing language issue commonly called the "Billion-Dollar mistake"\footnote{The term "Billion-Dollar mistake" was first coined by Tony Hoare, who also created the ALGOL W language. Having implemented null referencing in that language he may have caused around a billion dollars of damage since 1965, due to errors, vulnerabilities and system crashes. In the JavaScript world the implementation of the primitive "null" datatype may have also caused high sums of damages due to a around 25 year old JavaScript bug that causes the primitive "null" datatype to resolve to the type of "object"\cite{ref_billion_dollar_mistake}}. 
 
 \medskip
 \noindent
@@ -256,30 +251,54 @@ Later v3.0 was released in 2018 brining with it several smaller features like tu
 The most recent version v4.0 was released 2020 and brings improvements to the existing Tuple system by adding Variadic Tuples.
 \end{multicols}
 
-\subsection{Static type checking}
-
-Typescript if of it self is a compiler. It takes in TypeScript code
-and compiles it down to JavaScript while also doing static type checkint.
-Static type checking is the process of parsing the code into an AST
-(Abstract Syntax Tree) including type annotations. The types in the
-AST are then infered, if not existant, and are checked for soundness
-by the Type Resolver.
-
-\subsection{Gradual typing}
+\subsection{Gradual typing \cite{ref_gradual_typing}}
 
 TypeScript leverages gradual typing. Gradual typing is the principle
 of gradually adapting type annotations in your program, with the ability
-to complete leave out type annotations. This enables developers to
+to even completely leave out type annotations. This enables developers to
 gradually migrate over JavaScript projects to TypeScript without having
-to worry about code compatability. TypeScript will try to infer as
-many types as possible, but cannot guarantee complete type safety
-as long as there are sections in a program that are not type-annotated.
+to worry about code compatibility. TypeScript will try to infer as
+many types as possible, but \textit{cannot guarantee} complete type safety
+as long as there are sections in a program that are not type-annotated. 
+This enables us to selectively type certain areas of the code statically \footnote{Static typing is the principle of annotating and defining types within your code and letting a compiler check these types for soundness in a separate compilation step \ref{static_type_checking}\cite{ref_def_static_dynamic_type_checking}}, while typing other areas of the code dynamically \footnote{Dynamic type checking is the process of checking the types witin a program at runtime, potentially throwing an exception if a type error is encountered \cite{ref_def_static_dynamic_type_checking}}.
+
+\subsection{Static type checking \label{static_type_checking}}
+
+During compilation of the TypeScript source code, the Type-resolver \ref{architecture} checks for type soundness by using Static type checking algorithms.
+Static type checking is the process of analyzing code -- by using a previously generated AST\footnote{``An abstract syntax tree (AST) is a way of representing the syntax of a programming language as a hierarchical tree-like structure. This structure is used for generating symbol tables for compilers and later code generation. The tree represents all of the constructs in the language and their subsequent rules.'' \cite{ref_def_ast}} -- for soundness at compile time. Should the Type-resolver encounter any type soundness issues, it will throw a compilation exception and will halt any further computations until the issues are fixed and the compiler is restarted. In the case of TypeScript, the Type-resolver has be able to cope with missing type annotations within the code and must also be able to infer types of variables if they are not type-annotated to guarantee gradual typing capabilities. \cite{ref_static_type_checking}
+
+\subsection{Architectural overview \label{architecture}}
+
+TypeScript itself is primarily a compiler that runs on preexisting TypeScript code. This compiler takes in TypeScript files and emits valid JavaScript, which can then be executed by JavaScript run-times such as Node.js or Deno.
+
+\medskip
+\noindent
+\begin{list}{•}{These are the building blocks of the TypeScript compiler\cite{ref_ts_architecture}:}
+
+\item \textbf{Pre-processor:} The Pre-processor creates the compilation context by evaluating and resolving all ``.ts'' dependency references and potentially importing type files (.d.ts) 
+
+\item \textbf{Parser:} The parser parses the TypeScript code syntax into a Abstract Syntax Tree short AST.
+
+\item \textbf{Binder:} The Binders responsibility is to connect the various parts of the code into a coherent type system by creating Symbols.
+
+\item \textbf{Type-resolver/-checker:} The Type-resolver checks the code for type soundness and throws an exception for any type collisions, resulting in a failed compilation. This is the central part of the typescript compiler enabling static type checking.
+
+\item \textbf{Emitter:} The emitter then generates native JavaScript code from the previously generated AST, which can be executed by any capable JavaScript runtime.
+
+\end{list}
+
+\begin{note}
+Compilation by compiler is done in exactly the same order as the architectural building blocks are listed here.
+\end{note}
+
+\begin{note}
+There are also other parts in the TypeScript architecture, which are out of the scope of this paper. If you are interested in reading up more about the those other parts, please follow the URL in reference \cite{ref_ts_architecture}
+\end{note}
 
 \section{Features}
 
-We will have a look at the four most important features TypeScript
-brings with it. Knowing these features is enough to provide type safety
-to your code.
+Let us now have a look at the four most important features TypeScript
+provides.
 
 \subsection{Interfaces and Types}
 
@@ -308,11 +327,11 @@ What is the difference between an Interface and a Type?
 
 \begin{solution}
 There are hardly any differences between Interfaces and Types. Types
-have the ability to define primitive types such as numbers and strings,
-while Interfaces can only defined object structures and types within.
+have the ability to define \textit{primitive} types such as numbers and strings,
+while Interfaces can only define object structures and types within.
 Types can not be merged with each other, while Interfaces have the
 capability to be merged, should the developer define several Interfaces
-with the same name. In general, Interfaces should be preferred to
+with the same name \cite{ref_ts_interfaces_vs_types}. In general, Interfaces should be preferred to
 Types if they can be used interchangeably.
 \end{solution}
 
@@ -342,7 +361,6 @@ we can see how simple Tuples can be implemented:
 \begin{lstlisting}[style=ES6, language=JavaScript, caption="Tuple usage"]
 // Type structure: <order>, <key>, <value>
 type Detail = [number, string, number | string]
-
 let userDetails: Detail[] = [
 	[1, 'age', 22],
 	[2, 'semester', 6],
@@ -388,8 +406,8 @@ let userDetails: Detail<[number | string]>[] = [
 \end{lstlisting}
 
 \begin{remark}
-This Variadic Tuple system now lets us define the <custom element
-types> at a variable basis, giving us more freedom in reusing Types,
+This Variadic Tuple system now lets us define the ``<custom element
+types>'' at a variable basis, giving us more freedom in reusing Types,
 while still forcing us to abide to general typing structures like
 the 'Detail' type.
 \end{remark}
@@ -401,7 +419,7 @@ Namespaces allow us to split Types into separate logical units. This
 also allows for equally named types without them interfering with
 each other.
 
-\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Namespace definition"]
 namespace User {
 	export interface Profile {
 		email: string
@@ -435,7 +453,7 @@ by only making types visible that are intended to be used
 
 To use a type within a namespace we access it through dot notation:
 
-\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Namespace usage"]
 const userProfile: User.Profile = {
 	name: "John Doe"
 }
@@ -444,10 +462,10 @@ const userProfile: User.Profile = {
 \subsection{Generics}
 
 Generics introduce an abstration layer to your typings. It allows
-for dynamic types depending on the use case. Let's have a look at
+for dynamic types depending on the use case and rather acts as a type placeholder than a real type. Let's have a look at
 how Generics are used:
 
-\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Generic definition"]
 function listify<T>(x: T): T[] {
 	return [x]
 }
@@ -455,24 +473,39 @@ function listify<T>(x: T): T[] {
 
 This listify function can take any type of parameter x and returns a list of the type of parameter x. This allows for fully dynamic typing without having to reimplement the same function for each type of parameter. It is also possible to manually control the type we pass into the function. Let's have a look at the following use-case:
 
-\begin{lstlisting}[style=ES6, language=JavaScript, caption="Variadic Tuples"]
+\begin{lstlisting}[style=ES6, language=JavaScript, caption="Generic usage"]
 listify<bool>(true)
 \end{lstlisting}
 
 Here we are telling the listify function, that it should create a list of booleans, passing in one element of value "true"
 
-\section{Integration}
-
-\subsection{Language server}
 
 \section{Conclusion}
 
-Besides some configuration overhead and learning how to use TypeScript effectively, TypeScript can majorly improve software quality if used in the right way. Due to its gradual typing approach, preexisting JavaScript code need not be touched for you to get started with TypeScript. It can find bugs in your code and give you direct feedback while writing it, leveraging the power of the compiler and language-server. These bugs would normally have to be tested against in elaborate testing setups that may even take up more development time than simply implementing TypeScript in error prone program areas. All in all it can be said that TypeScript is a great tool to keep up and prevent degradation of the quality of large software projects.  
+Besides some configuration overhead and learning how to use TypeScript effectively, TypeScript can majorly improve software quality if used in the right way. Due to its gradual typing approach, preexisting JavaScript code need not be touched for one to get started with TypeScript. It can find bugs in your code and give you direct feedback while writing it, leveraging the power of the compiler. These bugs would normally have to be tested against in elaborate testing setups that may even take up more development time than simply implementing TypeScript in error prone program areas. Given all the features TypeScript has, there are hardly any limits to type definitions. All in all it can be said that TypeScript is a great tool to keep up and prevent degradation of the quality of large software projects if one is willing to take on the burden of additionally maintaining types in the code-base.  
+
+\pagebreak
 
 \begin{thebibliography}{1}
 \bibitem{ref_billion_dollar_mistake} Medium: Billion-dollar mistake(s)!, \href{https://jagadeeshrampam.medium.com/billion-dollar-mistake-s-37620be56a12}{https://jagadeeshrampam.medium.com/billion-dollar-mistake-s-37620be56a12}. Last accessed August 11, 2021
 
+\bibitem{ref_def_programing_language} Definition: Function and target, \href{https://en.wikipedia.org/wiki/Programming\_language}{https://en.wikipedia.org/wiki/Programming\_language}. Last accessed August 11, 2021
+
+\bibitem{ref_ts_wikipedia} Typescript Wikipedia page, \href{https://en.wikipedia.org/wiki/TypeScript}{https://en.wikipedia.org/wiki/TypeScript}. Last accessed August 13, 2021
+
+\bibitem{ref_def_ast} Abstract Syntax Tree (AST), \href{https://www.techopedia.com/definition/22431/abstract-syntax-tree-ast}{https://www.techopedia.com/definition/22431/abstract-syntax-tree-ast}. Last accessed August 11, 2021
+
 \bibitem{ref_ts_homepage} Typescript Homepage, \href{https://www.typescriptlang.org/}{https://www.typescriptlang.org/}. Last accessed August 8, 2021
+
+\bibitem{ref_gradual_typing} Gradual Typing: A New Perspective, \href{https://dl.acm.org/doi/pdf/10.1145/3290329}{https://dl.acm.org/doi/pdf/10.1145/3290329}. Last accessed August 13, 2021
+
+\bibitem{ref_ts_architecture} Architectural Overview, \href{https://github.com/microsoft/TypeScript/wiki/Architectural-Overview}{https://github.com/microsoft/TypeScript/wiki/Architectural-Overview}. Last accessed August 8, 2021
+
+\bibitem{ref_static_type_checking} Type Checking, \href{https://www.brainkart.com/article/Type-Checking_8086/}{https://www.brainkart.com/article/Type-Checking\_8086/}. Last accessed August 12, 2021
+
+\bibitem{ref_ts_interfaces_vs_types} Types vs. interfaces in TypeScript, \href{https://blog.logrocket.com/types-vs-interfaces-in-typescript/}{https://blog.logrocket.com/types-vs-interfaces-in-typescript/}. Last accessed August 12, 2021
+
+\bibitem{ref_def_static_dynamic_type_checking} Type chekcing -- Static of Dynamic?, \href{https://medium.com/@himankbh/type-checking-static-or-dynamic-76067dbccc7b}{https://medium.com/@himankbh/type-checking-static-or-dynamic-76067dbccc7b}. Last accessed August 12, 2021
 
 \bibitem{ref_programing_def} Thesaurus programing definition, \href{https://www.dictionary.com/browse/programing}{https://www.dictionary.com/browse/programing}. Last accessed August 9, 2021
 \end{thebibliography}
